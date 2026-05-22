@@ -1,5 +1,6 @@
 package br.sp.etec.sebrae.api_login.controller
 
+import br.sp.etec.sebrae.api_login.entity.Login
 import br.sp.etec.sebrae.api_login.entity.Usuario
 import br.sp.etec.sebrae.api_login.repository.UsuarioRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
-@CrossOrigin
+@CrossOrigin(origins = ["*"])
 @Controller
 class UsuarioController {
 
@@ -19,5 +20,14 @@ class UsuarioController {
     @PostMapping("/cadastro")
     fun cadastroUsuario(@RequestBody usuario: Usuario) : ResponseEntity<Usuario> {
         return ResponseEntity.ok(repository!!.save(usuario))
+    }
+
+    @PostMapping("/autenticar")
+    fun autenticar(@RequestBody login : Login) : ResponseEntity<Boolean> {
+        val usuario = repository?.findByEmail(login.email)
+        if (usuario != null && usuario.senha == login.senha) {
+            return ResponseEntity.ok(true)
+        }
+        return ResponseEntity.ok(false)
     }
 }
